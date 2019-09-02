@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
-using System;
+using System.Collections;
 
 public class PlayerCharacter : Character
 {
+    [Header("Cinematic Mode")]
+    public Cinemachine.CinemachineVirtualCamera cinematicCamera;
+    public float cinematicCameraChance;
+    public float cinematicCameraDuration;
+    public TimeManager.TimescaleEvent cinematicTimescaleEvent;
+
     [Header("Input")]
     public float dragDistance = 0.05f;
     public float dragTime;
@@ -93,6 +99,36 @@ public class PlayerCharacter : Character
         else
         {
             AttackDirection(attackDirection);
+        }
+    }
+
+    IEnumerator ResetCamera(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        cinematicCamera.enabled = false;
+    }
+
+    protected override void OnAttackMoveComplete()
+    {
+        base.OnAttackMoveComplete();
+        if (lastAttackedCharacter && lastAttackedCharacter.IsDead && Random.value <= cinematicCameraChance)
+        {
+            StartCoroutine(ResetCamera(cinematicCameraDuration));
+            TimeManager.Instance.PlayTimescaleEvent(cinematicTimescaleEvent);
+            cinematicCamera.enabled = true;
+            //cinematicCamera.LookAt = lastAttackedCharacter.transform;
+        }
+    }
+
+    protected override void OnParrySuccess(Vector3 direction)
+    {
+        base.OnParrySuccess(direction);
+        if (Random.value <= cinematicCameraChance)
+        {
+            StartCoroutine(ResetCamera(cinematicCameraDuration));
+            TimeManager.Instance.PlayTimescaleEvent(cinematicTimescaleEvent);
+            cinematicCamera.enabled = true;
+            //cinematicCamera.LookAt = lastAttackedCharacter.transform;
         }
     }
 }

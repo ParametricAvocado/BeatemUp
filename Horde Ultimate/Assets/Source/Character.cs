@@ -52,6 +52,8 @@ public class Character : MonoBehaviour
     public int TargettedByCount = 0;
 
     public Character targetCharacter;
+    public Character lastAttackedCharacter;
+
     public Vector3 attackDirection;
 
     public UnityEvent onDeath;
@@ -121,7 +123,6 @@ public class Character : MonoBehaviour
         {
             IsDead = true;
             characterController.enabled = false;
-            FlipAnimationSides();
             animator.SetTrigger(hDeath);
             animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hDeathVariations)));
 
@@ -131,12 +132,9 @@ public class Character : MonoBehaviour
 
     public virtual void OnDeath()
     {
-
         TimeManager.Instance.PlayTimescaleEvent(deathHitStop);
 
-        transform.DOKill();
-
-        transform.DOShakePosition(damageShakeDuration, 0.1f, 40);
+        transform.DOShakePosition(damageShakeDuration, 0.1f, 40,0).SetUpdate(true);
         Destroy(gameObject, destroyAfterDeathTime);
         onDeath.Invoke();
     }
@@ -200,6 +198,7 @@ public class Character : MonoBehaviour
     protected void AttackCharacter(Character target)
     {
         SetTarget(target);
+        lastAttackedCharacter = target;
         Vector3 toTarget = GetPlanarVectorToTarget();
 
         float distance = toTarget.magnitude;
@@ -215,6 +214,7 @@ public class Character : MonoBehaviour
     protected void AttackDirection(Vector3 direction)
     {
         SetTarget(null);
+        lastAttackedCharacter = null;
 
         FaceDirection(direction);
         attackDirection = direction;
@@ -225,6 +225,7 @@ public class Character : MonoBehaviour
     protected void ParryAttack(Character target)
     {
         SetTarget(target);
+        lastAttackedCharacter = target;
         IsParrying = true;
         HasSuccessfullyParried = false;
 
@@ -250,7 +251,7 @@ public class Character : MonoBehaviour
         moveTween.OnComplete(OnAttackMoveComplete);
     }
 
-    protected void OnAttackMoveComplete()
+    protected virtual void OnAttackMoveComplete()
     {
         IsAttacking = false;
         animator.ResetTrigger(hAttackBegin);
@@ -278,8 +279,9 @@ public class Character : MonoBehaviour
 
     }
 
-    protected void OnParrySuccess(Vector3 direction)
+    protected virtual void OnParrySuccess(Vector3 direction)
     {
+        SetTarget(null);
         HasSuccessfullyParried = true;
         TimeManager.Instance.PlayTimescaleEvent(parryHitStop);
         animator.ResetTrigger(hParryBegin);
@@ -292,9 +294,7 @@ public class Character : MonoBehaviour
     protected void OnParrySuccessComplete()
     {
         IsParrying = false;
-
     }
-
 
     protected void OnAttackParried(Vector3 direction)
     {
@@ -328,6 +328,6 @@ public class Character : MonoBehaviour
 
     private void FlipAnimationSides()
     {
-        animator.SetBool(hMirror, !animator.GetBool(hMirror));
+        //animator.SetBool(hMirror, !animator.GetBool(hMirror));
     }
 }

@@ -15,9 +15,9 @@ public class TimeManager : MonoBehaviour
 
     public void PlayTimescaleEvent(TimescaleEvent timescaleEvent)
     {
-        StopAllCoroutines();
         if (timescaleEvent.duration > 0)
         {
+            StopAllCoroutines();
             StartCoroutine(TimescaleEventCoroutine(timescaleEvent));
         }
     }
