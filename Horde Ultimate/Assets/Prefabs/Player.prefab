@@ -192,15 +192,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 1365530511766417617}
   animator: {fileID: 742934691197050267}
+  enableAttack: 1
+  enableParry: 1
+  targetlessAttackDistance: 2
   minAttackDistance: 1.5
   maxAttackDistance: 5
   attackMoveDuration: 0.1
   attackMoveEasing: 16
+  parriedAttackPushDistance: 1
+  parriedAttackMoveDuration: 0.3
+  parriedAttackMoveEasing: 15
+  parrySuccessPushDistance: 0.2
+  parrySuccessMoveDuration: 0.1
+  parrySuccessMoveEasing: 15
   damageShakeDuration: 0.2
+  destroyAfterDeathTime: 50
+  attackBeginHitStop:
+    timeScale: 0
+    duration: 0
+  attackCompleteHitStop:
+    timeScale: 0.5
+    duration: 0.1
+  parryHitStop:
+    timeScale: 0.2
+    duration: 1
+  deathHitStop:
+    timeScale: 0
+    duration: 0
   moveSpeed: 0
   IsAttacking: 0
+  IsParrying: 0
+  HasSuccessfullyParried: 0
+  IsStaggered: 0
   IsDead: 0
-  attackTarget: {fileID: 0}
+  TargettedByCount: 0
+  targetCharacter: {fileID: 0}
+  attackDirection: {x: 0, y: 0, z: 0}
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   dragDistance: 0.05
   dragTime: 0
   maxAngle: 45

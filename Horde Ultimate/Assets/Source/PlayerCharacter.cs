@@ -16,9 +16,10 @@ public class PlayerCharacter : Character
     Vector2 dragStart;
 
     Vector2 screenResolution;
-    float screenAspect;
 
-    Collider[] enemyColliders = new Collider[10];
+    bool swipeQueued;
+    Vector2 queuedSwipe;
+    float screenAspect;
 
     private void Start()
     {
@@ -28,10 +29,10 @@ public class PlayerCharacter : Character
 
     private void Update()
     {
-        UpdateInput();
+        ProcessInput();
     }
 
-    private void UpdateInput()
+    private void ProcessInput()
     {
         pointerPosition = Input.mousePosition / screenResolution;
 
@@ -55,6 +56,8 @@ public class PlayerCharacter : Character
         {
             EndDrag();
         }
+
+        DequeueSwipe();
     }
 
     private void BeginDrag()
@@ -71,59 +74,25 @@ public class PlayerCharacter : Character
     private void Swipe(Vector2 swipeVector)
     {
         EndDrag();
-
-        if (IsAttacking) return;
-
-        Vector3 attackDirection = new Vector3(swipeVector.x, 0, swipeVector.y).normalized;
-        AttackMove(attackDirection);
+        swipeQueued = true;
+        queuedSwipe = swipeVector;
     }
 
-    private void AttackMove(Vector3 direction)
+    public void DequeueSwipe()
     {
-        int overlapped = Physics.OverlapSphereNonAlloc(transform.position, maxAttackDistance, enemyColliders, EnemyMask);
+        if (!swipeQueued || !CanAttack) return;
 
-        Vector3 toEnemy;
-        float enemyDistance;
+        swipeQueued = false;
+        Vector3 attackDirection = new Vector3(queuedSwipe.x, 0, queuedSwipe.y).normalized;
 
-        float closestDistance = float.MaxValue;
-        Collider closestCollider = null;
-        Vector3 closestDirection = Vector3.zero;
-
-        attackTarget = null;
-
-
-        for (int i = 0; i < overlapped; i++)
+        var closestCharacter = GetClosestCharacterInCone(maxAttackDistance, attackDirection, maxAngle, EnemyMask);
+        if (closestCharacter)
         {
-            toEnemy = Vector3.ProjectOnPlane(enemyColliders[i].transform.position - transform.position, Vector3.up);
-            enemyDistance = toEnemy.magnitude;
-            if (Vector3.Angle(direction, toEnemy) < maxAngle)
-            {
-                if (enemyDistance < closestDistance)
-                {
-                    closestCollider = enemyColliders[i];
-                    closestDistance = enemyDistance;
-                    closestDirection = toEnemy.normalized;
-                }
-            }
-        }
-        IsAttacking = true;
-
-        Vector3 attackMovePosition;
-
-
-        if (closestCollider)
-        {
-            attackTarget = closestCollider.GetComponent<Character>();
-
-            attackMovePosition = transform.position + closestDirection * (closestDistance - minAttackDistance);
-            transform.rotation = Quaternion.LookRotation(closestDirection);
+            DoTargetedAction(closestCharacter);
         }
         else
         {
-            attackMovePosition = transform.position + direction * maxAttackDistance;
-            transform.rotation = Quaternion.LookRotation(direction);
+            AttackDirection(attackDirection);
         }
-
-        BeginAttackMove(attackMovePosition);
     }
 }

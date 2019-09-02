@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: 501a3d0ff1c515146aea9da26f31902d
+guid: 408ff2b26409a7e489d646427d00b631
 ModelImporter:
   serializedVersion: 25
   internalIDToNameTable:
   - first:
       74: -203655887218126122
     second: mixamo.com
-  - first:
-      74: 2353680664591731088
-    second: PunchHit
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -38,40 +35,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: PunchSwing
+      name: Outward Block
       takeName: mixamo.com
       internalID: -203655887218126122
-      firstFrame: 6.1
-      lastFrame: 17.8
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: PunchHit
-      takeName: mixamo.com
-      internalID: 2353680664591731088
-      firstFrame: 29.1
-      lastFrame: 46.1
+      firstFrame: 10.8
+      lastFrame: 14.1
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

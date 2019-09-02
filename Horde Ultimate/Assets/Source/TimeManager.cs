@@ -13,15 +13,32 @@ public class TimeManager : MonoBehaviour
         Instance = this;
     }
 
-    public void HitStop(float scale, float duration)
+    public void PlayTimescaleEvent(TimescaleEvent timescaleEvent)
     {
-        Time.timeScale = scale;
-        StartCoroutine(HitStopRecovery(duration));
+        StopAllCoroutines();
+        if (timescaleEvent.duration > 0)
+        {
+            StartCoroutine(TimescaleEventCoroutine(timescaleEvent));
+        }
     }
 
-    IEnumerator HitStopRecovery(float duration)
+    IEnumerator TimescaleEventCoroutine(TimescaleEvent timescaleEvent)
     {
-        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = timescaleEvent.timeScale;
+        yield return new WaitForSecondsRealtime(timescaleEvent.duration);
         Time.timeScale = baseTimescale;
+    }
+
+    [System.Serializable]
+    public struct TimescaleEvent
+    {
+        public float timeScale;
+        public float duration;
+
+        public TimescaleEvent(float timeScale, float duration)
+        {
+            this.timeScale = timeScale;
+            this.duration = duration;
+        }
     }
 }

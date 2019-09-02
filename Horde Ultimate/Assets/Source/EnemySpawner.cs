@@ -9,6 +9,7 @@ public class EnemySpawner : MonoBehaviour
 
     public float spawnRadius = 10;
     public float spawnCooldown = 5;
+    public AnimationCurve spawnCooldownOverTime;
 
     float spawnTimeLeft;
 
@@ -16,8 +17,11 @@ public class EnemySpawner : MonoBehaviour
     {
         spawnTimeLeft = spawnCooldown;
     }
+
     private void Update()
     {
+        if (!playerCharacter || playerCharacter.IsDead) return;
+
         if (spawnTimeLeft > 0)
         {
             spawnTimeLeft -= Time.deltaTime;
@@ -27,7 +31,7 @@ public class EnemySpawner : MonoBehaviour
             float angle = Random.Range(0, 360);
             Vector3 spawnOffset = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward * spawnRadius;
             Instantiate(enemyPrefab, playerCharacter.transform.position + spawnOffset, Quaternion.LookRotation(-spawnOffset));
-            spawnTimeLeft = spawnCooldown;
+            spawnTimeLeft = spawnCooldown * spawnCooldownOverTime.Evaluate(Time.timeSinceLevelLoad);
         }
     }
 }

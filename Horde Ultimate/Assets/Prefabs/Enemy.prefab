@@ -113,18 +113,57 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 5648003638153212561}
   animator: {fileID: 1135747331478350539}
+  canAttack: 1
+  canParryAttacks: 0
+  targetlessAttackDistance: 2
   minAttackDistance: 1.5
   maxAttackDistance: 2
-  attackMoveDuration: 0.1
+  attackMoveDuration: 0.2
   attackMoveEasing: 16
+  parriedAttackPushDistance: 1
+  parriedAttackMoveDuration: 0.3
+  parriedAttackMoveEasing: 15
+  parrySuccessPushDistance: 0.2
+  parrySuccessMoveDuration: 0.1
+  parrySuccessMoveEasing: 15
   damageShakeDuration: 0.2
   destroyAfterDeathTime: 50
-  hitStopScale: 0.2
-  hitStopDuration: 0.2
+  attackBeginHitStop:
+    timeScale: 0.5
+    duration: 0.5
+  attackCompleteHitStop:
+    timeScale: 0
+    duration: 0
+  parryHitStop:
+    timeScale: 0
+    duration: 0
+  deathHitStop:
+    timeScale: 0
+    duration: 0
   moveSpeed: 5
   IsAttacking: 0
+  IsParrying: 0
+  IsStaggered: 0
   IsDead: 0
-  attackTarget: {fileID: 0}
+  TargettedByCount: 0
+  targetCharacter: {fileID: 0}
+  attackDirection: {x: 0, y: 0, z: 0}
+  onDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2454610763731881862}
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &8742513553991840474
 GameObject:
   m_ObjectHideFlags: 0

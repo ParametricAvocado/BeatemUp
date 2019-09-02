@@ -15,34 +15,31 @@ public class EnemyCharacter : Character
 
     private void FixedUpdate()
     {
-        if (IsDead) return;
+        if (!CanMove) return;
+        if (!targetPlayer || targetPlayer.IsDead) return;
 
         Vector3 direction = Vector3.ProjectOnPlane(targetPlayer.transform.position - transform.position, Vector3.up).normalized;
         Move(direction);
-
     }
 
     private void Update()
     {
-        if (IsDead) return;
+        if (!CanAttack) return;
+
+        if (!targetPlayer || targetPlayer.IsDead) return;
+
         if (Vector3.Distance(transform.position, targetPlayer.transform.position) < maxAttackDistance)
         {
-
+            if (CanAttackCharacter(targetPlayer))
+            {
+                AttackCharacter(targetPlayer);
+            }
         }
     }
 
-    public override void OnDamage()
+    public override void OnDeath()
     {
-        if (!IsDead)
-        {
-            IsDead = true;
-            characterController.enabled = false;
-
-            animator.SetTrigger(hDeath);
-            animator.SetFloat(hDeathRandom, Random.Range(0, 6));
-
-            transform.DOShakePosition(damageShakeDuration, 0.1f, 40);
-            Destroy(gameObject, destroyAfterDeathTime);
-        }
+        base.OnDeath();
+        FindObjectOfType<KillCounter>().AddKill();
     }
 }
