@@ -113,17 +113,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 5648003638153212561}
   animator: {fileID: 1135747331478350539}
-  canAttack: 1
-  canParryAttacks: 0
+  enableAttack: 1
+  enableParry: 0
   targetlessAttackDistance: 2
   minAttackDistance: 1.5
   maxAttackDistance: 2
   attackMoveDuration: 0.2
   attackMoveEasing: 16
   parriedAttackPushDistance: 1
-  parriedAttackMoveDuration: 0.3
+  parriedAttackMoveDuration: 0.5
   parriedAttackMoveEasing: 15
-  parrySuccessPushDistance: 0.2
+  parrySuccessPushDistance: 0
   parrySuccessMoveDuration: 0.1
   parrySuccessMoveEasing: 15
   damageShakeDuration: 0.2
@@ -143,10 +143,12 @@ MonoBehaviour:
   moveSpeed: 5
   IsAttacking: 0
   IsParrying: 0
+  HasSuccessfullyParried: 0
   IsStaggered: 0
   IsDead: 0
   TargettedByCount: 0
   targetCharacter: {fileID: 0}
+  lastAttackedCharacter: {fileID: 0}
   attackDirection: {x: 0, y: 0, z: 0}
   onDeath:
     m_PersistentCalls:

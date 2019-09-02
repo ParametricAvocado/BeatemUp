@@ -204,7 +204,7 @@ MonoBehaviour:
   parriedAttackPushDistance: 1
   parriedAttackMoveDuration: 0.3
   parriedAttackMoveEasing: 15
-  parrySuccessPushDistance: 0.2
+  parrySuccessPushDistance: 0
   parrySuccessMoveDuration: 0.1
   parrySuccessMoveEasing: 15
   damageShakeDuration: 0.2
