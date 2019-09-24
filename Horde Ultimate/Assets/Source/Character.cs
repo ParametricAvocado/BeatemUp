@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     [Header("Combat")]
     public bool enableAttack = true;
     public bool enableParry = false;
+    public bool enableParrySuccessCancel = true;
     [Space]
     public int maxHealth = 1;
     [Space]
@@ -46,13 +47,15 @@ public class Character : MonoBehaviour
     public bool HasSuccessfullyParried = false;
     public bool IsStaggered = false;
     public bool IsDead = false;
+
+    public bool CanCancelState => (IsParrying && HasSuccessfullyParried && enableParrySuccessCancel);
     public bool IsBusy => (IsAttacking || IsParrying || IsStaggered);
     public bool CanMove => !(IsDead || IsBusy);
-    public bool CanAttack => !IsDead && enableAttack && (!IsBusy || HasSuccessfullyParried);
-    public bool CanParry => !IsDead && enableParry && (!IsBusy || HasSuccessfullyParried);
+    public bool CanAttack => !IsDead && enableAttack && (!IsBusy || CanCancelState);
+    public bool CanParry => !IsDead && enableParry && (!IsBusy || CanCancelState);
 
     public int Health = 0;
-    public int TargettedByCount = 0;
+    public int TargetedByCount = 0;
 
     public Character targetCharacter;
     public Character lastAttackedCharacter;
@@ -96,7 +99,7 @@ public class Character : MonoBehaviour
 
     protected bool CanParryCharacter(Character target)
     {
-        return CanParry && enableParry;
+        return CanParry;
     }
 
     private Vector3 GetPlanarVectorToTarget()
@@ -104,65 +107,7 @@ public class Character : MonoBehaviour
         return Vector3.ProjectOnPlane(targetCharacter.transform.position - transform.position, Vector3.up);
     }
 
-    private void SetTarget(Character target)
-    {
-        if (target == targetCharacter) return;
-
-        if (targetCharacter)
-        {
-            targetCharacter.TargettedByCount--;
-            targetCharacter = null;
-        }
-
-        if (target)
-        {
-            targetCharacter = target;
-            targetCharacter.TargettedByCount++;
-        }
-    }
-
-    public virtual void OnDamage(Character instigator)
-    {
-        if (IsDead)
-            return;
-
-        if (IsParrying)
-        {
-            OnParrySuccess(instigator.attackDirection);
-        }
-        else
-        {
-            if (Health > 0)
-            {
-                Health--;
-            }
-
-            if (Health == 0)
-            {
-                IsDead = true;
-                characterController.enabled = false;
-                animator.SetTrigger(hDeath);
-                animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hDeathVariations)));
-
-                OnDeath();
-            }
-            else
-            {
-                FlipAnimationSides();
-                OnAttackParried(instigator.attackDirection);
-            }
-        }
-    }
-
-    public virtual void OnDeath()
-    {
-        TimeManager.Instance.PlayTimescaleEvent(deathHitStop);
-
-        transform.DOShakePosition(damageShakeDuration, 0.1f, 40, 0).SetUpdate(true);
-        Destroy(gameObject, destroyAfterDeathTime);
-        onDeath.Invoke();
-    }
-
+    #region Targeting
     protected void GetPotentialCharacterInRange(float range, LayerMask targetLayer)
     {
         potentialTargetCount = Physics.OverlapSphereNonAlloc(transform.position, range, potentialTargetColliders, targetLayer);
@@ -206,6 +151,75 @@ public class Character : MonoBehaviour
         return closestCharacter;
     }
 
+    private void SetTarget(Character target)
+    {
+        if (target == targetCharacter) return;
+
+        if (targetCharacter)
+        {
+            TargetedByCount--;
+            targetCharacter.OnBecomeUntargeted(this);
+            targetCharacter = null;
+        }
+
+        if (target)
+        {
+            targetCharacter = target;
+            TargetedByCount++;
+            targetCharacter.OnBecomeTargeted(this);
+        }
+    }
+
+    public virtual void OnBecomeTargeted(Character instigator) { }
+
+    public virtual void OnBecomeUntargeted(Character instigator) { }
+    #endregion
+
+    #region Damage
+    public virtual void OnDamage(Character instigator)
+    {
+        if (IsDead)
+            return;
+
+        if (IsParrying)
+        {
+            OnParrySuccess(instigator.attackDirection);
+        }
+        else
+        {
+            if (Health > 0)
+            {
+                Health--;
+            }
+
+            if (Health == 0)
+            {
+                IsDead = true;
+                characterController.enabled = false;
+                animator.SetTrigger(hDeath);
+                animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hDeathVariations)));
+
+                OnDeath();
+            }
+            else
+            {
+                FlipAnimationSides();
+                OnAttackParried(instigator.attackDirection);
+            }
+        }
+    }
+
+    public virtual void OnDeath()
+    {
+        TimeManager.Instance.PlayTimescaleEvent(deathHitStop);
+
+        transform.DOShakePosition(damageShakeDuration, 0.1f, 40, 0).SetUpdate(true);
+        Destroy(gameObject, destroyAfterDeathTime);
+        onDeath.Invoke();
+    }
+    #endregion
+
+    #region Actions
     protected void DoTargetedAction(Character target)
     {
         if (CanAttackCharacter(target))
@@ -214,7 +228,7 @@ public class Character : MonoBehaviour
         }
         else if (CanParryCharacter(target))
         {
-            ParryAttack(target);
+            ParryCharacter(target);
         }
     }
 
@@ -245,7 +259,7 @@ public class Character : MonoBehaviour
         BeginAttackMove(transform.position + direction * targetlessAttackDistance);
     }
 
-    protected void ParryAttack(Character target)
+    protected void ParryCharacter(Character target)
     {
         SetTarget(target);
         lastAttackedCharacter = target;
@@ -329,7 +343,9 @@ public class Character : MonoBehaviour
         if (IsDead) return;
         IsStaggered = false;
     }
+    #endregion
 
+    #region Movement
     protected void FaceDirection(Vector3 direction)
     {
         if (direction.y != 0)
@@ -345,6 +361,7 @@ public class Character : MonoBehaviour
         FaceDirection(direction);
         characterController.Move(direction * moveSpeed * Time.deltaTime);
     }
+    #endregion
 
     private void FlipAnimationSides()
     {

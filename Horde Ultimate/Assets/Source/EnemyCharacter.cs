@@ -40,4 +40,12 @@ public class EnemyCharacter : Character
         base.OnDeath();
         FindObjectOfType<KillCounter>().AddKill();
     }
+
+    public override void OnBecomeTargeted(Character instigator)
+    {
+        if (CanParryCharacter(instigator))
+        {
+            ParryCharacter(instigator);
+        }
+    }
 }

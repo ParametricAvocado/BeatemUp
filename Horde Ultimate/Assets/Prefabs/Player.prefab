@@ -196,6 +196,7 @@ MonoBehaviour:
   animator: {fileID: 742934691197050267}
   enableAttack: 1
   enableParry: 1
+  maxHealth: 1
   targetlessAttackDistance: 2
   minAttackDistance: 1.5
   maxAttackDistance: 5
@@ -227,7 +228,8 @@ MonoBehaviour:
   HasSuccessfullyParried: 0
   IsStaggered: 0
   IsDead: 0
-  TargettedByCount: 0
+  Health: 0
+  TargetedByCount: 0
   targetCharacter: {fileID: 0}
   lastAttackedCharacter: {fileID: 0}
   attackDirection: {x: 0, y: 0, z: 0}

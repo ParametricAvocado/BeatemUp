@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5648003638153212560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.62, y: 1, z: 3.69}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1959187116072722385}
@@ -115,6 +115,7 @@ MonoBehaviour:
   animator: {fileID: 1135747331478350539}
   enableAttack: 1
   enableParry: 0
+  enableParrySuccessCancel: 0
   maxHealth: 1
   targetlessAttackDistance: 2
   minAttackDistance: 1.5
@@ -125,7 +126,7 @@ MonoBehaviour:
   parriedAttackMoveDuration: 0.5
   parriedAttackMoveEasing: 15
   parrySuccessPushDistance: 0
-  parrySuccessMoveDuration: 0.1
+  parrySuccessMoveDuration: 0.5
   parrySuccessMoveEasing: 15
   damageShakeDuration: 0.2
   destroyAfterDeathTime: 50
@@ -148,7 +149,7 @@ MonoBehaviour:
   IsStaggered: 0
   IsDead: 0
   Health: 0
-  TargettedByCount: 0
+  TargetedByCount: 0
   targetCharacter: {fileID: 0}
   lastAttackedCharacter: {fileID: 0}
   attackDirection: {x: 0, y: 0, z: 0}
