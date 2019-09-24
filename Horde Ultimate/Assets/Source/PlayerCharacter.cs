@@ -27,13 +27,14 @@ public class PlayerCharacter : Character
     Vector2 queuedSwipe;
     float screenAspect;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         screenResolution = new Vector2(Screen.width, Screen.height);
         screenAspect = screenResolution.x / screenResolution.y;
     }
 
-    private void Update()
+    protected override void Update()
     {
         ProcessInput();
     }

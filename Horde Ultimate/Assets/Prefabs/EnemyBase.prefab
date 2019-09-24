@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5648003638153212561}
   - component: {fileID: 6776603890840229767}
   m_Layer: 9
-  m_Name: Enemy
+  m_Name: EnemyBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -115,6 +115,7 @@ MonoBehaviour:
   animator: {fileID: 1135747331478350539}
   enableAttack: 1
   enableParry: 0
+  maxHealth: 1
   targetlessAttackDistance: 2
   minAttackDistance: 1.5
   maxAttackDistance: 2
@@ -146,6 +147,7 @@ MonoBehaviour:
   HasSuccessfullyParried: 0
   IsStaggered: 0
   IsDead: 0
+  Health: 0
   TargettedByCount: 0
   targetCharacter: {fileID: 0}
   lastAttackedCharacter: {fileID: 0}

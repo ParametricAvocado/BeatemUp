@@ -1324,7 +1324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCharacter: {fileID: 2035554226}
-  enemyPrefab: {fileID: 5648003638153212560, guid: 0fc4f771cca794846947eb0b2c66dde5,
+  enemyPrefab: {fileID: 8696083684264240185, guid: c5d5a9319e78e8f4d96cab2e2a834fac,
     type: 3}
   spawnRadius: 10
   spawnCooldown: 1

@@ -13,6 +13,8 @@ public class Character : MonoBehaviour
     public bool enableAttack = true;
     public bool enableParry = false;
     [Space]
+    public int maxHealth = 1;
+    [Space]
     public float targetlessAttackDistance = 2;
     public float minAttackDistance = 0.3f;
     public float maxAttackDistance = 5;
@@ -49,6 +51,7 @@ public class Character : MonoBehaviour
     public bool CanAttack => !IsDead && enableAttack && (!IsBusy || HasSuccessfullyParried);
     public bool CanParry => !IsDead && enableParry && (!IsBusy || HasSuccessfullyParried);
 
+    public int Health = 0;
     public int TargettedByCount = 0;
 
     public Character targetCharacter;
@@ -76,6 +79,15 @@ public class Character : MonoBehaviour
     public static int hAttackVariations = Animator.StringToHash("AttackVariations");
     public static int hParryVariations = Animator.StringToHash("ParryVariations");
     public static int hDeathVariations = Animator.StringToHash("DeathVariations");
+
+    protected virtual void Start()
+    {
+        Health = maxHealth;
+    }
+
+    protected virtual void FixedUpdate() { }
+
+    protected virtual void Update() { }
 
     protected bool CanAttackCharacter(Character target)
     {
@@ -111,7 +123,6 @@ public class Character : MonoBehaviour
 
     public virtual void OnDamage(Character instigator)
     {
-
         if (IsDead)
             return;
 
@@ -121,12 +132,25 @@ public class Character : MonoBehaviour
         }
         else
         {
-            IsDead = true;
-            characterController.enabled = false;
-            animator.SetTrigger(hDeath);
-            animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hDeathVariations)));
+            if (Health > 0)
+            {
+                Health--;
+            }
 
-            OnDeath();
+            if (Health == 0)
+            {
+                IsDead = true;
+                characterController.enabled = false;
+                animator.SetTrigger(hDeath);
+                animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hDeathVariations)));
+
+                OnDeath();
+            }
+            else
+            {
+                FlipAnimationSides();
+                OnAttackParried(instigator.attackDirection);
+            }
         }
     }
 
@@ -134,7 +158,7 @@ public class Character : MonoBehaviour
     {
         TimeManager.Instance.PlayTimescaleEvent(deathHitStop);
 
-        transform.DOShakePosition(damageShakeDuration, 0.1f, 40,0).SetUpdate(true);
+        transform.DOShakePosition(damageShakeDuration, 0.1f, 40, 0).SetUpdate(true);
         Destroy(gameObject, destroyAfterDeathTime);
         onDeath.Invoke();
     }
@@ -184,7 +208,6 @@ public class Character : MonoBehaviour
 
     protected void DoTargetedAction(Character target)
     {
-
         if (CanAttackCharacter(target))
         {
             AttackCharacter(target);
@@ -242,8 +265,6 @@ public class Character : MonoBehaviour
         HasSuccessfullyParried = false;
         IsAttacking = true;
 
-        FlipAnimationSides();
-
         animator.SetTrigger(hAttackBegin);
         animator.SetFloat(hRandom, Random.Range(0, (int)animator.GetFloat(hAttackVariations)));
 
@@ -260,7 +281,6 @@ public class Character : MonoBehaviour
         {
             if (targetCharacter.IsParrying)
             {
-                IsStaggered = true;
                 OnAttackParried(-attackDirection);
             }
             else
@@ -276,7 +296,6 @@ public class Character : MonoBehaviour
         {
             animator.SetTrigger(hAttackComplete);
         }
-
     }
 
     protected virtual void OnParrySuccess(Vector3 direction)
@@ -298,6 +317,7 @@ public class Character : MonoBehaviour
 
     protected void OnAttackParried(Vector3 direction)
     {
+        IsStaggered = true;
         animator.SetTrigger(hAttackParried);
 
         var moveTween = transform.DOMove(transform.position + direction * parriedAttackPushDistance, parriedAttackMoveDuration).SetEase(parriedAttackMoveEasing);
@@ -328,6 +348,6 @@ public class Character : MonoBehaviour
 
     private void FlipAnimationSides()
     {
-        //animator.SetBool(hMirror, !animator.GetBool(hMirror));
+        animator.SetBool(hMirror, !animator.GetBool(hMirror));
     }
 }

@@ -1,19 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using DG.Tweening;
+﻿using UnityEngine;
 
 public class EnemyCharacter : Character
 {
     PlayerCharacter targetPlayer;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         targetPlayer = FindObjectOfType<PlayerCharacter>();
         animator.SetFloat(hRun, 1);
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
         if (!CanMove) return;
         if (!targetPlayer || targetPlayer.IsDead) return;
@@ -22,7 +20,7 @@ public class EnemyCharacter : Character
         Move(direction);
     }
 
-    private void Update()
+    protected override void Update()
     {
         if (!CanAttack) return;
 
